@@ -11,18 +11,23 @@ import {
   ExternalLink,
   Github,
   GraduationCap,
+  Home,
   Languages,
   Linkedin,
   Mail,
   MapPin,
   Menu,
   Moon,
+  Award,
+  FileText,
+  FolderKanban,
   Phone,
   Play,
   Send,
   Sparkles,
   Sun,
   X,
+  UserRound,
 } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/Button";
@@ -66,11 +71,20 @@ export const Route = createFileRoute("/")({
   component: Portfolio,
 });
 
-const navItems = ["about", "skills", "experience", "projects", "certifications", "resume", "contact"];
+const navItems = [
+  { id: "home", label: "Home", icon: Home },
+  { id: "about", label: "About", icon: UserRound },
+  { id: "skills", label: "Skills", icon: Code2 },
+  { id: "experience", label: "Experience", icon: BriefcaseBusiness },
+  { id: "projects", label: "Projects", icon: FolderKanban },
+  { id: "certifications", label: "Certifications", icon: Award },
+  { id: "resume", label: "Résumé", icon: FileText },
+  { id: "contact", label: "Contact", icon: Mail },
+];
 const cvUrl = "/resume.pdf";
 
 const skillGroups = [
-  { title: "Languages", icon: Code2, skills: ["Java", "JavaScript", "Python", "C", "PHP"] },
+  { title: "Languages", icon: Code2, skills: ["Java", "JavaScript", "Python", "C", "PHP", "HTML", "CSS"] },
   {
     title: "Frameworks & libraries",
     icon: Sparkles,
@@ -295,6 +309,12 @@ function Portfolio() {
     heroRef.current.style.setProperty("--parallax-y", `${y}px`);
   };
 
+  const handleNavPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--spotlight-x", `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty("--spotlight-y", `${event.clientY - bounds.top}px`);
+  };
+
   const submitContact = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -312,23 +332,30 @@ function Portfolio() {
 
       <header className="site-header">
         <a className="brand" href="#home" onClick={(e) => { e.preventDefault(); scrollTo("home"); }} aria-label="Yassine Khlif, home">YK<span>.</span></a>
-        <nav className={`nav-links ${menuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <a key={item} href={`#${item}`} className={active === item ? "active" : ""} onClick={(e) => { e.preventDefault(); scrollTo(item); }}>{item}</a>
+        <nav className={`nav-links ${menuOpen ? "is-open" : ""}`} aria-label="Primary navigation" onPointerMove={handleNavPointerMove}>
+          {navItems.map(({ id, label, icon: Icon }) => (
+            <a key={id} href={`#${id}`} className={active === id ? "active" : ""} aria-current={active === id ? "page" : undefined} title={label} onClick={(e) => { e.preventDefault(); scrollTo(id); }}><Icon size={17} aria-hidden="true" /><span>{label}</span></a>
           ))}
         </nav>
         <div className="header-actions">
           <Button variant="icon" className="theme-toggle" aria-label={dark ? "Switch to light theme" : "Switch to dark theme"} title={dark ? "Light theme" : "Dark theme"} onClick={toggleTheme}>
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
+            {dark ? <Sun size={24} strokeWidth={2.2} /> : <Moon size={24} strokeWidth={2.2} />}
           </Button>
           <Button variant="icon" className="menu-button" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            {menuOpen ? <X size={24} strokeWidth={2.2} /> : <Menu size={24} strokeWidth={2.2} />}
           </Button>
         </div>
       </header>
 
       <main>
         <section id="home" className="hero" ref={heroRef} onPointerMove={handlePointerMove}>
+          <svg className="hero-light-lines" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <path className="light-line line-olive" d="M650 175 C850 60 1010 115 1135 210 S1370 335 1510 205" />
+            <path className="light-line line-rust" d="M645 205 C855 95 1015 150 1145 245 S1385 365 1525 240" />
+            <path className="light-line line-olive" d="M640 238 C855 130 1025 185 1155 280 S1390 400 1535 275" />
+            <path className="light-line line-rust" d="M665 690 C865 575 1020 610 1160 710 S1380 825 1520 680" />
+            <path className="light-line line-olive" d="M675 725 C875 610 1035 645 1175 745 S1390 860 1530 715" />
+          </svg>
           <div className="hero-particles" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
           <div className="hero-content">
             <div className="availability"><span /> Available for new opportunities</div>
@@ -346,6 +373,7 @@ function Portfolio() {
               <div className="window-bar"><span /><span /><span /><small>profile.ts</small></div>
               <pre><code><b>const</b> engineer = {`{`}<br />  location: <em>"Sfax, Tunisia"</em>,<br />  focus: [<em>"AI"</em>, <em>"Full-Stack"</em>],<br />  mindset: <em>"build useful things"</em>,<br />  currentlyLearning: <b>true</b><br />{`}`};</code></pre>
             </div>
+            <p className="hero-note"><span>YK / 26</span> Computer Engineering · IIT Sfax</p>
             <div className="social-rail">
               <a href="https://github.com/yassinekh08" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={19} /></a>
               <a href="https://www.linkedin.com/in/yassine-khlif" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={19} /></a>
@@ -451,7 +479,7 @@ function Portfolio() {
         <section id="resume" className="section resume-section">
           <SectionHeading number="06" eyebrow="Résumé" title="The story, at a glance." />
           <div className="resume-layout">
-            <div className="resume-preview reveal"><div className="resume-paper"><iframe src={`${cvUrl}#toolbar=0&navpanes=0`} title="Yassine Khlif résumé preview" /></div></div>
+            <div className="resume-preview reveal"><a className="resume-paper" href={cvUrl} target="_blank" rel="noreferrer" aria-label="Open Yassine Khlif résumé PDF"><img className="resume-page-image" src="/resume-preview.webp" alt="Preview of Yassine Khlif’s résumé" loading="lazy" /></a></div>
             <div className="resume-summary reveal">
               <div className="summary-stat"><strong>3</strong><span>Industry internships</span></div><div className="summary-stat"><strong>2026</strong><span>Computer Engineering graduate</span></div><div className="summary-stat"><strong>#1</strong><span>Graduating class rank</span></div>
               <div className="resume-line"><span /><div><small>Focus</small><p>AI systems, RAG, intelligent commerce, and secure full-stack delivery.</p></div></div>
